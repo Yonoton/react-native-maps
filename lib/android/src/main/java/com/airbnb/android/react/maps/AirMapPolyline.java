@@ -22,7 +22,6 @@ public class AirMapPolyline extends AirMapFeature {
   private List<LatLng> coordinates;
   private int color;
   private float width;
-  private boolean tappable;
   private boolean geodesic;
   private float zIndex;
   private Cap lineCap = new RoundCap();
@@ -61,13 +60,6 @@ public class AirMapPolyline extends AirMapFeature {
     this.zIndex = zIndex;
     if (polyline != null) {
       polyline.setZIndex(zIndex);
-    }
-  }
-
-  public void setTappable(boolean tapabble) {
-    this.tappable = tapabble;
-    if (polyline != null) {
-      polyline.setClickable(tappable);
     }
   }
 
@@ -113,7 +105,7 @@ public class AirMapPolyline extends AirMapFeature {
   @Override
   public void addToMap(GoogleMap map) {
     polyline = map.addPolyline(getPolylineOptions());
-    polyline.setClickable(this.tappable);
+    polyline.setClickable(true);
   }
 
   @Override

@@ -27,8 +27,7 @@
 #import "AIRMapSnapshot.h"
 #import "RCTConvert+AirMap.h"
 #import "AIRMapOverlay.h"
-#import "AIRWeakTimerReference.h"
-#import "AIRWeakMapReference.h"
+
 #import <MapKit/MapKit.h>
 
 static NSString *const RCTMapViewKey = @"MapView";
@@ -903,12 +902,10 @@ static int kDragCenterContext;
 {
     [self _regionChanged:mapView];
 
-    AIRWeakTimerReference *weakTarget = [[AIRWeakTimerReference alloc] initWithTarget:self andSelector:@selector(_onTick:)];
-    
     mapView.regionChangeObserveTimer = [NSTimer timerWithTimeInterval:AIRMapRegionChangeObserveInterval
-                                                               target:weakTarget
-                                                             selector:@selector(timerDidFire:)
-                                                             userInfo:@{ RCTMapViewKey: [[AIRWeakMapReference alloc] initWithMapView: mapView] }
+                                                               target:self
+                                                             selector:@selector(_onTick:)
+                                                             userInfo:@{ RCTMapViewKey: mapView }
                                                               repeats:YES];
 
     [[NSRunLoop mainRunLoop] addTimer:mapView.regionChangeObserveTimer forMode:NSRunLoopCommonModes];
@@ -958,8 +955,7 @@ static int kDragCenterContext;
 
 - (void)_onTick:(NSTimer *)timer
 {
-    AIRWeakMapReference *weakRef = timer.userInfo[RCTMapViewKey];
-    [self _regionChanged:weakRef.mapView];
+    [self _regionChanged:timer.userInfo[RCTMapViewKey]];
 }
 
 - (void)_regionChanged:(AIRMap *)mapView
